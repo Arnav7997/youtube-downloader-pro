@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT Downloader Pro - GitHub Project</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e0e6ed;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .analyze-btn {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .video-info {
+            display: none;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .video-preview {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .thumbnail {
+            width: 200px;
+            height: 112px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .video-details h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .video-meta {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .download-options {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .options-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .options-header h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .format-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .format-tab {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #e0e6ed;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .format-tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .quality-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .quality-card {
+            background: white;
+            border: 2px solid #e0e6ed;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .quality-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .quality-card.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .quality-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #667eea;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .quality-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .quality-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .quality-badge {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .quality-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .quality-detail {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .advanced-options {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #e0e6ed;
+        }
+
+        .advanced-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .advanced-content {
+            display: none;
+        }
+
+        .advanced-content.show {
+            display: block;
+        }
+
+        .option-group {
+            margin-bottom: 15px;
+        }
+
+        .option-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .option-group select,
+        .option-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .bitrate-info {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #1976d2;
+            margin-top: 5px;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .fair-use-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .fair-use-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .fair-use-icon {
+            background: linear-gradient(45deg, #ffc107, #ff9800);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .timeline {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .timeline-segments {
+            display: flex;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .segment {
+            flex: 1;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .segment.safe {
+            background: #28a745;
+        }
+
+        .segment.caution {
+            background: #ffc107;
+        }
+
+        .segment.restricted {
+            background: #dc3545;
+        }
+
+        .segment:hover {
+            opacity: 0.8;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .recommendations {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-card {
+                padding: 20px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .video-preview {
+                flex-direction: column;
+            }
+            
+            .quality-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 YT Downloader Pro</h1>
+            <p>Download YouTube videos responsibly with Fair Use guidance</p>
+        </div>
+
+        <div class="main-card">
+            <div class="input-section">
+                <div class="input-group">
+                    <input type="text" class="url-input" placeholder="Paste YouTube video URL here..." id="videoUrl">
+                    <button class="analyze-btn" onclick="analyzeVideo()">🔍 Analyze Video</button>
+                </div>
+            </div>
+
+            <div class="video-info" id="videoInfo">
+                <div class="video-preview">
+                    <img class="thumbnail" id="thumbnail" alt="Video thumbnail">
+                    <div class="video-details">
+                        <h3 id="videoTitle">Video Title</h3>
+                        <div class="video-meta">
+                            <p><strong>Channel:</strong> <span id="channelName">Channel Name</span></p>
+                            <p><strong>Duration:</strong> <span id="duration">0:00</span></p>
+                            <p><strong>Views:</strong> <span id="views">0</span></p>
+                            <p><strong>Upload Date:</strong> <span id="uploadDate">Unknown</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="download-options">
+                    <div class="options-header">
+                        <h3>📥 Download Options</h3>
+                        <p>Choose your preferred format and quality</p>
+                    </div>
+
+                    <div class="format-selector">
+                        <div class="format-tab active" onclick="switchFormat('video')" id="videoTab">
+                            🎬 Video
+                        </div>
+                        <div class="format-tab" onclick="switchFormat('audio')" id="audioTab">
+                            🎵 Audio Only
+                        </div>
+                    </div>
+
+                    <div id="videoOptions" class="format-content">
+                        <div class="quality-grid" id="videoQualityGrid">
+                            <!-- Video quality options will be populated here -->
+                        </div>
+                    </div>
+
+                    <div id="audioOptions" class="format-content" style="display: none;">
+                        <div class="quality-grid" id="audioQualityGrid">
+                            <!-- Audio quality options will be populated here -->
+                        </div>
+                    </div>
+
+                    <div class="advanced-options">
+                        <div class="advanced-toggle" onclick="toggleAdvanced()">
+                            <span id="advancedIcon">▶️</span>
+                            <span>Advanced Options</span>
+                        </div>
+                        <div class="advanced-content" id="advancedContent">
+                            <div class="option-group">
+                                <label for="codecSelect">Video Codec:</label>
+                                <select id="codecSelect">
+                                    <option value="h264">H.264 (Most Compatible)</option>
+                                    <option value="h265">H.265/HEVC (Smaller Size)</option>
+                                    <option value="vp9">VP9 (Web Optimized)</option>
+                                    <option value="av1">AV1 (Latest Standard)</option>
+                                </select>
+                            </div>
+                            <div class="option-group">
+                                <label for="audioCodec">Audio Codec:</label>
+                                <select id="audioCodec">
+                                    <option value="aac">AAC (Recommended)</option>
+                                    <option value="mp3">MP3 (Universal)</option>
+                                    <option value="opus">Opus (High Quality)</option>
+                                    <option value="flac">FLAC (Lossless)</option>
+                                </select>
+                            </div>
+                            <div class="option-group">
+                                <label for="subtitles">Subtitles:</label>
+                                <select id="subtitles">
+                                    <option value="none">No Subtitles</option>
+                                    <option value="auto">Auto-generated</option>
+                                    <option value="manual">Manual (if available)</option>
+                                    <option value="all">All Available Languages</option>
+                                </select>
+                            </div>
+                            <div class="option-group">
+                                <label for="customBitrate">Custom Video Bitrate (kbps):</label>
+                                <input type="number" id="customBitrate" placeholder="e.g., 2000" min="100" max="50000">
+                                <div class="bitrate-info">
+                                    💡 Higher bitrate = better quality but larger file size
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="download-btn" onclick="downloadVideo()" id="downloadBtn" disabled>
+                    📥 Select a Format to Download
+                </button>
+            </div>
+        </div>
+
+        <div class="fair-use-section">
+            <div class="fair-use-header">
+                <div class="fair-use-icon">⚖️</div>
+                <div>
+                    <h2>Fair Use Analysis</h2>
+                    <p>Understanding copyright implications for your content usage</p>
+                </div>
+            </div>
+
+            <div class="timeline" id="fairUseTimeline" style="display: none;">
+                <h4>Video Timeline - Fair Use Assessment</h4>
+                <div class="timeline-segments" id="timelineSegments">
+                    <!-- Timeline segments will be populated here -->
+                </div>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #28a745;"></div>
+                        <span>Likely Fair Use</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ffc107;"></div>
+                        <span>Use with Caution</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #dc3545;"></div>
+                        <span>High Risk</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommendations" id="recommendations">
+                <h4>📋 Fair Use Recommendations</h4>
+                <ul id="recommendationsList">
+                    <li>Upload a video to see personalized fair use recommendations</li>
+                </ul>
+            </div>
+
+            <div class="warning">
+                <h4>⚠️ Important Legal Disclaimer</h4>
+                <p>This tool provides general guidance only and should not be considered legal advice. Fair use is complex and context-dependent. For commercial use or when in doubt, consult with a qualified intellectual property attorney. Always credit original creators and consider seeking permission when possible.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentVideo = null;
+        let selectedFormat = 'video';
+        let selectedQuality = null;
+        let selectedOption = null;
+
+        // Enhanced video quality options
+        const videoQualities = [
+            {
+                quality: '4K',
+                resolution: '3840x2160',
+                fps: 60,
+                size: '180MB',
+                format: 'MP4',
+                bitrate: '15000',
+                codec: 'H.264',
+                premium: true
+            },
+            {
+                quality: '1440p',
+                resolution: '2560x1440',
+                fps: 60,
+                size: '95MB',
+                format: 'MP4',
+                bitrate: '8000',
+                codec: 'H.264',
+                premium: false
+            },
+            {
+                quality: '1080p',
+                resolution: '1920x1080',
+                fps: 60,
+                size: '45MB',
+                format: 'MP4',
+                bitrate: '4000',
+                codec: 'H.264',
+                premium: false
+            },
+            {
+                quality: '720p',
+                resolution: '1280x720',
+                fps: 30,
+                size: '28MB',
+                format: 'MP4',
+                bitrate: '2500',
+                codec: 'H.264',
+                premium: false
+            },
+            {
+                quality: '480p',
+                resolution: '854x480',
+                fps: 30,
+                size: '18MB',
+                format: 'MP4',
+                bitrate: '1000',
+                codec: 'H.264',
+                premium: false
+            },
+            {
+                quality: '360p',
+                resolution: '640x360',
+                fps: 30,
+                size: '12MB',
+                format: 'MP4',
+                bitrate: '600',
+                codec: 'H.264',
+                premium: false
+            }
+        ];
+
+        const audioQualities = [
+            {
+                quality: 'High',
+                bitrate: '320 kbps',
+                size: '7.5MB',
+                format: 'MP3',
+                codec: 'AAC',
+                premium: false
+            },
+            {
+                quality: 'Medium',
+                bitrate: '192 kbps',
+                size: '4.5MB',
+                format: 'MP3',
+                codec: 'AAC',
+                premium: false
+            },
+            {
+                quality: 'Standard',
+                bitrate: '128 kbps',
+                size: '3MB',
+                format: 'MP3',
+                codec: 'AAC',
+                premium: false
+            },
+            {
+                quality: 'FLAC',
+                bitrate: 'Lossless',
+                size: '35MB',
+                format: 'FLAC',
+                codec: 'FLAC',
+                premium: true
+            }
+        ];
+
+        // Sample video data for demonstration
+        const sampleVideos = {
+            'music': {
+                title: 'Popular Music Video - Artist Name',
+                channel: 'Major Record Label',
+                duration: '3:45',
+                views: '50M',
+                uploadDate: '2024-01-15',
+                thumbnail: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="112" viewBox="0 0 200 112"><rect width="200" height="112" fill="%23ff6b6b"/><text x="100" y="60" text-anchor="middle" fill="white" font-size="16">🎵 Music Video</text></svg>',
+                type: 'music',
+                fairUse: {
+                    segments: [
+                        {start: 0, end: 30, type: 'restricted', reason: 'Full song with original audio'},
+                        {start: 30, end: 45, type: 'caution', reason: 'Instrumental break'},
+                        {start: 45, end: 225, type: 'restricted', reason: 'Copyrighted lyrics and melody'}
+                    ],
+                    recommendations: [
+                        'Consider using only 10-15 seconds for review/commentary',
+                        'Add substantial commentary or criticism',
+                        'Use instrumental sections if available',
+                        'Consider royalty-free alternatives',
+                        'Seek permission from rights holders'
+                    ]
+                }
+            },
+            'educational': {
+                title: 'How Quantum Physics Works - Educational Content',
+                channel: 'Science Education Channel',
+                duration: '12:30',
+                views: '2.1M',
+                uploadDate: '2024-02-10',
+                thumbnail: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="112" viewBox="0 0 200 112"><rect width="200" height="112" fill="%234ecdc4"/><text x="100" y="60" text-anchor="middle" fill="white" font-size="14">🔬 Educational</text></svg>',
+                type: 'educational',
+                fairUse: {
+                    segments: [
+                        {start: 0, end: 60, type: 'safe', reason: 'Educational introduction'},
+                        {start: 60, end: 300, type: 'safe', reason: 'Educational content with original visuals'},
+                        {start: 300, end: 450, type: 'caution', reason: 'Some copyrighted diagrams'},
+                        {start: 450, end: 600, type: 'safe', reason: 'Original demonstrations'},
+                        {start: 600, end: 750, type: 'safe', reason: 'Educational conclusion'}
+                    ],
+                    recommendations: [
+                        'Excellent for educational fair use',
+                        'Can use longer segments for teaching',
+                        'Credit the original creator',
+                        'Perfect for academic presentations',
+                        'Consider reaching out to creator for collaboration'
+                    ]
+                }
+            },
+            'news': {
+                title: 'Breaking News: Recent Events Coverage',
+                channel: 'News Network',
+                duration: '8:15',
+                views: '1.5M',
+                uploadDate: '2024-03-01',
+                thumbnail: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="112" viewBox="0 0 200 112"><rect width="200" height="112" fill="%23ff7675"/><text x="100" y="60" text-anchor="middle" fill="white" font-size="16">📰 News</text></svg>',
+                type: 'news',
+                fairUse: {
+                    segments: [
+                        {start: 0, end: 120, type: 'safe', reason: 'News reporting - public interest'},
+                        {start: 120, end: 300, type: 'safe', reason: 'Factual coverage'},
+                        {start: 300, end: 400, type: 'caution', reason: 'Interviews may have restrictions'},
+                        {start: 400, end: 495, type: 'safe', reason: 'Public interest information'}
+                    ],
+                    recommendations: [
+                        'News content often has strong fair use protection',
+                        'Great for commentary and analysis',
+                        'Can use for educational purposes',
+                        'Consider the newsworthiness factor',
+                        'Attribution to news source recommended'
+                    ]
+                }
+            }
+        };
+
+        function analyzeVideo() {
+            const url = document.getElementById('videoUrl').value;
+            
+            if (!url) {
+                alert('Please enter a YouTube URL');
+                return;
+            }
+
+            // Simulate video analysis
+            let videoType = 'educational';
+            if (url.includes('music') || url.includes('song')) {
+                videoType = 'music';
+            } else if (url.includes('news') || url.includes('breaking')) {
+                videoType = 'news';
+            }
+
+            currentVideo = sampleVideos[videoType];
+            displayVideoInfo(currentVideo);
+            displayFairUseAnalysis(currentVideo);
+        }
+
+        function displayVideoInfo(video) {
+            document.getElementById('thumbnail').src = video.thumbnail;
+            document.getElementById('videoTitle').textContent = video.title;
+            document.getElementById('channelName').textContent = video.channel;
+            document.getElementById('duration').textContent = video.duration;
+            document.getElementById('views').textContent = video.views;
+            document.getElementById('uploadDate').textContent = video.uploadDate;
+
+            // Generate video quality options
+            generateQualityOptions();
+
+            document.getElementById('videoInfo').style.display = 'block';
+        }
+
+        function generateQualityOptions() {
+            const videoGrid = document.getElementById('videoQualityGrid');
+            const audioGrid = document.getElementById('audioQualityGrid');
+
+            // Generate video options
+            videoGrid.innerHTML = videoQualities.map((option, index) => `
+                <div class="quality-card" onclick="selectQuality('video', ${index})" data-format="video" data-index="${index}">
+                    <div class="quality-header">
+                        <span class="quality-title">${option.quality}</span>
+                        ${option.premium ? '<span class="quality-badge">HD+</span>' : ''}
+                    </div>
+                    <div class="quality-details">
+                        <div class="quality-detail">
+                            <span>Resolution:</span>
+                            <span>${option.resolution}</span>
+                        </div>
+                        <div class="quality-detail">
+                            <span>FPS:</span>
+                            <span>${option.fps}</span>
+                        </div>
+                        <div class="quality-detail">
+                            <span>Size:</span>
+                            <span>${option.size}</span>
+                        </div>
+                        <div class="quality-detail">
+                            <span>Format:</span>
+                            <span>${option.format}</span>
+                        </div>
+                        <div class="quality-detail">
+                            <span>Bitrate:</span>
+                            <span>${option.bitrate} kbps</span>
+                        </div>
+                        <div class="quality-detail">
+                            <span>Codec:</span>
+                            <span>${option.codec}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Generate audio options
+            audioGrid.innerHTML = audioQualities.map((option, index) => `
+                <div class="quality-card" onclick="selectQuality('audio', ${index})" data-format="audio" data-index="${index}">
+                    <div class="quality-header">
+                        <span class="quality-title">${option.quality} Quality</span>
+                        ${option.premium ? '<span class="quality-badge">Lossless</span>' : ''}
+                    </div>
+                    <div class="quality-details">
+                        <div class="quality-detail">
+                            <span>Bitrate:</span>
+                            <span>${option.bitrate}</span>
+                        </div>
+                        <div class="quality-detail">
+                            <span>Size:</span>
+                            <span>${option.size}</span>
+                        </div>
+                        <div class="quality-detail">
+                            <span>Format:</span>
+                            <span>${option.format}</span>
+                        </div>
+                        <div class="quality-detail">
+                            <span>Codec:</span>
+                            <span>${option.codec}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function switchFormat(format) {
+            selectedFormat = format;
+            
+            // Update tabs
+            document.getElementById('videoTab').classList.toggle('active', format === 'video');
+            document.getElementById('audioTab').classList.toggle('active', format === 'audio');
+            
+            // Show/hide content
+            document.getElementById('videoOptions').style.display = format === 'video' ? 'block' : 'none';
+            document.getElementById('audioOptions').style.display = format === 'audio' ? 'block' : 'none';
+            
+            // Reset selection
+            selectedQuality = null;
+            selectedOption = null;
+            document.querySelectorAll('.quality-card').forEach(card => card.classList.remove('selected'));
+            updateDownloadButton();
+        }
+
+        function selectQuality(format, index) {
+            selectedFormat = format;
+            selectedQuality = index;
+            selectedOption = format === 'video' ? videoQualities[index] : audioQualities[index];
+            
+            // Update UI
+            document.querySelectorAll('.quality-card').forEach(card => card.classList.remove('selected'));
+            document.querySelector(`[data-format="${format}"][data-index="${index}"]`).classList.add('selected');
+            
+            updateDownloadButton();
+        }
+
+        function updateDownloadButton() {
+            const button = document.getElementById('downloadBtn');
+            if (selectedOption) {
+                button.disabled = false;
+                button.textContent = `📥 Download ${selectedOption.quality} ${selectedFormat === 'video' ? 'Video' : 'Audio'} (${selectedOption.size})`;
+            } else {
+                button.disabled = true;
+                button.textContent = '📥 Select a Format to Download';
+            }
+        }
+
+        function toggleAdvanced() {
+            const content = document.getElementById('advancedContent');
+            const icon = document.getElementById('advancedIcon');
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                icon.textContent = '▶️';
+            } else {
+                content.classList.add('show');
+                icon.textContent = '🔽';
+            }
+        }
+
+        function displayFairUseAnalysis(video) {
+            const timeline = document.getElementById('fairUseTimeline');
+            const segments = document.getElementById('timelineSegments');
+            const recommendations = document.getElementById('recommendationsList');
+
+            // Create timeline segments
+            const totalDuration = parseDuration(video.duration);
+            segments.innerHTML = video.fairUse.segments.map(segment => {
+                const width = ((segment.end - segment.start) / totalDuration) * 100;
+                return `
+                    <div class="segment ${segment.type}" 
+                         style="flex: ${width}" 
+                         title="${formatTime(segment.start)} - ${formatTime(segment.end)}: ${segment.reason}"
+                         onclick="showSegmentInfo('${segment.start}', '${segment.end}', '${segment.reason}', '${segment.type}')">
+                    </div>
+                `;
+            }).join('');
+
+            // Display recommendations
+            recommendations.innerHTML = video.fairUse.recommendations.map(rec => 
+                `<li>${rec}</li>`
+            ).join('');
+
+            timeline.style.display = 'block';
+        }
+
+        function parseDuration(duration) {
+            const parts = duration.split(':');
+            return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function showSegmentInfo(start, end, reason, type) {
+            const riskLevel = {
+                'safe': 'Low Risk - Likely Fair Use',
+                'caution': 'Medium Risk - Use with Caution',
+                'restricted': 'High Risk - Likely Not Fair Use'
+            };
+            
+            alert(`Segment: ${formatTime(start)} - ${formatTime(end)}\nRisk Level: ${riskLevel[type]}\nReason: ${reason}`);
+        }
+
+        function downloadVideo() {
+            if (!selectedOption) {
+                alert('Please select a format and quality first');
+                return;
+            }
+
+            // Get advanced options
+            const codec = document.getElementById('codecSelect').value;
+            const audioCodec = document.getElementById('audioCodec').value;
+            const subtitles = document.getElementById('subtitles').value;
+            const customBitrate = document.getElementById('customBitrate').value;
+
+            // Simulate download process
+            const button = document.getElementById('downloadBtn');
+            const originalText = button.textContent;
+            
+            button.textContent = '⏳ Preparing Download...';
+            button.disabled = true;
+
+            setTimeout(() => {
+                button.textContent = '🔄 Processing...';
+                setTimeout(() => {
+                    button.textContent = '📁 Download Ready!';
+                    setTimeout(() => {
+                        const downloadDetails = `
+Download Configuration:
+• Format: ${selectedFormat === 'video' ? 'Video' : 'Audio Only'}
+• Quality: ${selectedOption.quality}
+• Resolution: ${selectedOption.resolution || 'N/A'}
+• Codec: ${selectedFormat === 'video' ? codec.toUpperCase() : audioCodec.toUpperCase()}
+• Estimated Size: ${selectedOption.size}
+${customBitrate ? `• Custom Bitrate: ${customBitrate} kbps` : ''}
+${subtitles !== 'none' ? `• Subtitles: ${subtitles}` : ''}
+
+Fair Use Reminder:
+• Use content responsibly
+• Follow fair use guidelines shown above
+• Credit original creators
+• Consider seeking permission for commercial use
+                        `;
+                        
+                        alert(downloadDetails);
+                        button.textContent = originalText;
+                        button.disabled = false;
+                    }, 2000);
+                }, 2000);
+            }, 3000);
+        }
+
+        // Auto-analyze if URL is provided in hash
+        window.addEventListener('load', () => {
+            const hash = window.location.hash;
+            if (hash.includes('demo')) {
+                document.getElementById('videoUrl').value = 'https://youtube.com/watch?v=demo_educational_video';
+                setTimeout(analyzeVideo, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
